@@ -20,7 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-# AUTH
+
+
+# RABBIT 
+A little replacement for that other thing.
 
 ## Actions
 
@@ -63,5 +66,3 @@ password resets is intricate
 -> email link recieved
     -> email reset link clicked
       -> email reset screen 
-
-

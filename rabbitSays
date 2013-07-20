@@ -1,1 +1,1 @@
---*RUN RABBIT*--,[:ran:] /home/rumplefraggle/www/RIG/Auth/rabbit,[:wrote:] /home/rumplefraggle/www/RIG/Auth/rabbitSays
+--*RUN RABBIT*--,[:ran:] /home/rumplefraggle/www/rabbit/rabbit,[:wrote:] /home/rumplefraggle/www/rabbit/rabbitSays
