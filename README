@@ -21,48 +21,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-
 # RABBIT 
-A little replacement for that other thing.
-
-## Actions
-
-${mount}/:user/login/password
-${mount}/:user/logout/session
-${mount}/:user/islogged
-
-## Model 
-id
-password 
-createdtime
-accesedtime
-updatedtime
-
-
-## Crud
-  ${mysqllight routes}
-
-## Api
-
-###Create
-  ${mount}/:user/create/:password 
-
-### Update
-  ${mount}/:user/update/:password
-
-### Delete
-  ${mount}/:user/delete/:password 
-
-### Read 
-   `NULL` 
-
-### Notes
-password resets is intricate
-
--> reset request
--> log request
--> hit route on emailer
-    -> don`t wait for request
--> email link recieved
-    -> email reset link clicked
-      -> email reset screen 

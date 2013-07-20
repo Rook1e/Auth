@@ -3,6 +3,9 @@ var config = module.exports  = {}
 config.port       = '8787'
 config.interface  = '192.168.56.101'
 
+// turn of routed
+//config.routed     = false
+
 
 config.repl_port  = '5001'
 config.run_rabbit = true
