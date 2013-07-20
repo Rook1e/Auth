@@ -20,21 +20,48 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+# AUTH
 
-To install 
+## Actions
 
-npm install
-then cd into all of the folders in node_modules &&
-npm install
-( orm will throw errors but still works. orm is a nice interface but is held together with hot glue )
+${mount}/:user/login/password
+${mount}/:user/logout/session
+${mount}/:user/islogged
 
-To run
+## Model 
+id
+password 
+createdtime
+accesedtime
+updatedtime
 
-read all config files then 
-node app.js
+
+## Crud
+  ${mysqllight routes}
+
+## Api
+
+###Create
+  ${mount}/:user/create/:password 
+
+### Update
+  ${mount}/:user/update/:password
+
+### Delete
+  ${mount}/:user/delete/:password 
+
+### Read 
+   `NULL` 
+
+### Notes
+password resets is intricate
+
+-> reset request
+-> log request
+-> hit route on emailer
+    -> don`t wait for request
+-> email link recieved
+    -> email reset link clicked
+      -> email reset screen 
 
 
-TODO
-docs 
-acl
-router

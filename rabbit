@@ -1,4 +1,13 @@
 #!/bin/bash 
+echo run rabbit run 
 
+curl localhost:8787
 
-echo run rabbit run
+### TESTS
+# $mount/:user/create/:password  -> 'request' | 'ok'
+# $mount/:user/login/:password   -> 'auth'    | 'ok'
+# $mount/:user/islogged          ->  true       false
+# $mount/:user/logout/:password  -> 'auth'    | 'ok'
+# $mount/:user/reset             -> 'auth'    | 'ok'
+# $mount/:user/update/:token     -> 'auth'    | 'ok'
+# $mount/:user/login/:password   -> 'auth'    | 'ok'
