@@ -1,18 +1,29 @@
 var express = require('express')
 var app     = express()
-  
+
+var _CONFIG = require('./CONFIG.js')
+var _DATABASE_CONFIG = _CONFIG.database_config
+var _PATH_TO_MODLES  = _CONFIG.path_to_models
+var _PORT            = _CONFIG.port
+var _INTERFACE       = _CONFIG.interface
+var _REPL_PORT       = _CONFIG.repl_port
+
+var ORM             = null
+var Models          = null
+
   module.exports = app
   module.exports.bootstrap = bootstrap
-  module.exports.config ={}
-    module.exports.config.mount = '/'
-    module.exports.config.port = '8787'
-    module.exports.config.interface = '192.168.56.101'
-  
-  //console.log('lifted function')
+  module.exports._CONFIG = _CONFIG 
+
   if(!module.parent){  debugger;bootstrap(run)  }
 
 function bootstrap(cb){ 
-    _app(null,cb)
+    require('Model')(_DATABASE_CONFIG,_PATH_TO_MODLES,function(err,_ORM){ 
+      if(err) throw new Error('ORM exploded')
+      ORM = _ORM
+      Models = ORM.models 
+      _app(null,cb)
+    })
 }
 
 
@@ -23,17 +34,17 @@ function _app(err,cb){
 
       // Configuration
       app.configure(function(){
-        app.set('interface', module.exports.config.interface);
-        app.set('port',      module.exports.config.port);
-        app.set('views', __dirname + '/public');
-        app.set('view engine', 'jade');
-        app.set('view options', {layout:false });
-        app.set('reload', false );
-        app.use(express.bodyParser());
-        app.use(express.methodOverride());
-        app.use(express.compress())
+        app.set('interface', _INTERFACE);
+        app.set('port'     , _PORT     );
+        //app.set('views', __dirname + '/public');
+        //app.set('view engine', 'jade');
+        //app.set('view options', {layout:false });
+        //app.set('reload', false );
+        //app.use(express.bodyParser());
+        //app.use(express.methodOverride());
+        //app.use(express.compress())
         app.use(app.router);
-        app.use(express.directory(__dirname +'/public'));
+        //app.use(express.directory(__dirname +'/public'));
         app.use(express.static(__dirname + '/public'));
         app.use(express.favicon());
         app.use(express.logger('dev'));
@@ -52,6 +63,7 @@ function run(err,cb){
     require('http').createServer(app).listen(app.get('port'), function(){
       console.log("App listening on interface "+app.get('interface') + " using port " + app.get('port'));
         if(cb) cb()
+        if(_REPL_PORT) require('repel')(_REPL_PORT,{app:app,Models:Models})
     });
 }
 
