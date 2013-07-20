@@ -4,11 +4,14 @@ var app     = express()
 var _CONFIG = require('./CONFIG.js')
 var _DATABASE_CONFIG = _CONFIG.database_config
 var _PATH_TO_MODLES  = _CONFIG.path_to_models
+var _PATH_TO_API     = _CONFIG.path_to_api
 var _PORT            = _CONFIG.port
 var _INTERFACE       = _CONFIG.interface
 var _REPL_PORT       = _CONFIG.repl_port
 var _RUN_RABBIT      = _CONFIG.run_rabbit
 
+
+var API             = require('Api')(__dirname+'/Api') 
 var ORM             = null
 var Models          = null
 
@@ -50,10 +53,9 @@ function _app(err,cb){
         app.use(express.favicon());
         app.use(express.logger('dev'));
       });
-
-      app.get('/',function(req,res){
-        res.end(html)
-      })
+      
+      
+      API.attachGet(app)
 
       if(module.parent && _RUN_RABBIT) require('rabbit')(__dirname)
 

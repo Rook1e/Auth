@@ -7,6 +7,9 @@ config.interface  = '192.168.56.101'
 config.repl_port  = '5001'
 config.run_rabbit = true
 
+
+config.path_to_api = __dirname +'/Api'
+
 config.path_to_models = __dirname +'/config/Models'
 config.database_config =  {
   database : "testAuth",
