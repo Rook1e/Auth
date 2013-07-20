@@ -14,25 +14,42 @@ var _RUN_RABBIT      = _CONFIG.run_rabbit
 var API             = require('Api')(__dirname+'/Api') 
 var ORM             = null
 var Models          = null
-  
+//var ROUTER          = require('routed') config
+//var ACL             = require(ACL)      config
 
+    //app.ORM    = ORM
+    app.Models = Models
+    app.API    = API
+    //app.ACL    = ACL
+    //app.ROUTER = ROUTER
 
-  req.prototype.Models = Models
+  //debugger // look for this on app in repl
+  //req.prototype.Models = Models
 
   module.exports = app
   module.exports.bootstrap = bootstrap
   module.exports._CONFIG = _CONFIG 
 
-  if(!module.parent){  debugger;bootstrap(run)  }
+  if(!module.parent){  bootstrap(run)  }
 
+
+// should be fancy async auto // looked into fancy auto synch have 
+// to wrap all the modules strange to make it work
+// opting for callback hell
 function bootstrap(cb){ 
-  // maybe load relationships here
+
     require('Model')(_DATABASE_CONFIG,_PATH_TO_MODLES,function(err,_ORM){ 
       if(err) throw new Error('ORM exploded')
       ORM = _ORM
       Models = ORM.models 
-      _app(null,cb)
+    
+        require(__dirname+'/config/Hooks/BEFORE-APP.js')(app,function(){
+        _app(null,cb)
+        })
+    
+    
     })
+
 }
 
 
@@ -52,13 +69,20 @@ function _app(err,cb){
         //app.use(express.bodyParser());
         //app.use(express.methodOverride());
         //app.use(express.compress())
+        
+        // how to extend req prototype?
+        app.use(function(req,res,next){
+          req.Models = Models
+          next()
+        })
+
         app.use(app.router);
         //app.use(express.directory(__dirname +'/public'));
-        app.use(express.static(__dirname + '/public'));
+        //app.use(express.static(__dirname + '/public'));
         app.use(express.favicon());
         app.use(express.logger('dev'));
       });
-      
+     
       
       API.attachGet(app)
 
