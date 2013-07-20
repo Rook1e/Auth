@@ -14,6 +14,10 @@ var _RUN_RABBIT      = _CONFIG.run_rabbit
 var API             = require('Api')(__dirname+'/Api') 
 var ORM             = null
 var Models          = null
+  
+
+
+  req.prototype.Models = Models
 
   module.exports = app
   module.exports.bootstrap = bootstrap
@@ -22,6 +26,7 @@ var Models          = null
   if(!module.parent){  debugger;bootstrap(run)  }
 
 function bootstrap(cb){ 
+  // maybe load relationships here
     require('Model')(_DATABASE_CONFIG,_PATH_TO_MODLES,function(err,_ORM){ 
       if(err) throw new Error('ORM exploded')
       ORM = _ORM

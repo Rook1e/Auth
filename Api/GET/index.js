@@ -4,4 +4,4 @@ module.exports = index = function(req,res){
 
 index._route  = '/'
 index._weight =  1
-//index._skip   =  true
+index._skip   =  true
