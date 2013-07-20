@@ -33,3 +33,8 @@ To run
 read all config files then 
 node app.js
 
+
+TODO
+docs 
+acl
+router
