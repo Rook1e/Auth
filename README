@@ -62,4 +62,6 @@ password resets is intricate
     -> don`t wait for request
 -> email link recieved
     -> email reset link clicked
-      -> email reset screen
+      -> email reset screen 
+
+

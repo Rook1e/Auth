@@ -1,12 +1,13 @@
 var config = module.exports  = {}
 
-config.port      = '8787'
-config.interface = '192.168.56.101'
-config.repl_port = '5001'
+config.port       = '8787'
+config.interface  = '192.168.56.101'
 
+
+config.repl_port  = '5001'
+config.run_rabbit = true
 
 config.path_to_models = __dirname +'/config/Models'
-
 config.database_config =  {
   database : "testAuth",
   //protocol : "[mysql|postgres|redshift|sqlite]",

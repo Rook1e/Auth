@@ -7,6 +7,7 @@ var _PATH_TO_MODLES  = _CONFIG.path_to_models
 var _PORT            = _CONFIG.port
 var _INTERFACE       = _CONFIG.interface
 var _REPL_PORT       = _CONFIG.repl_port
+var _RUN_RABBIT      = _CONFIG.run_rabbit
 
 var ORM             = null
 var Models          = null
@@ -54,6 +55,9 @@ function _app(err,cb){
         res.end(html)
       })
 
+      if(module.parent && _RUN_RABBIT) require('rabbit')(__dirname)
+
+
    if(cb) cb()
 }
 
@@ -63,7 +67,8 @@ function run(err,cb){
     require('http').createServer(app).listen(app.get('port'), function(){
       console.log("App listening on interface "+app.get('interface') + " using port " + app.get('port'));
         if(cb) cb()
-        if(_REPL_PORT) require('repel')(_REPL_PORT,{app:app,Models:Models})
+        if(_REPL_PORT)  require('repel')(_REPL_PORT,{app:app,Models:Models})
+        if(_RUN_RABBIT) require('rabbit')(__dirname)
     });
 }
 
