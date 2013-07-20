@@ -39,7 +39,8 @@ Model.definition ={
         password : { type:'text'  , required:true },
         //access   : { type:'number', required:true }, // this might need to be hacked in
         //created   : { type:'number', /*required:true*/ }, // beforeSave and beforeCreate hooks are busted can`t use em changes don`t persist
-        modify    : { type:'number', /*required:true*/ }
+        modify    : { type:'number', /*required:true*/ },
+        pin       : { type:'text'}
     }
 
 Model.advanced  = {
@@ -114,7 +115,20 @@ Ensures the property value is a valid IPv4 address. It does not accept masks (ex
 
 
     methods:{
+      generatePin:function(cb){
+        this.pin = Math.floor((1 + Math.random()) * 0x10000000000).toString(16) // this function is flawed  
+      
+         if(cb){
+          this.save((function(pin){ return function(err){
+              debugger
+              cb(err,pin)
 
+          }})(this.pin))
+         }else{
+          this.save()
+         }
+         
+      }
     },
     
     /*

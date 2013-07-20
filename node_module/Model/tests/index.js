@@ -10,13 +10,13 @@ var ORM = require('./../index.js')(DATABASE_CONFIG,__dirname+'/Models',function(
     ORM.sync(function(){
 
       ORM.models.user.create({id:'spoasd',password:'xxxxxx'},function(err,result){
-        console.log(err)
-        console.log(result)
-        
+          result.generatePin(function(err,pin){ 
+            debugger
+          })
       })
+    
 
-    
-    
+
     })})
 
     require('repel')(5001,{ORM:ORM})
