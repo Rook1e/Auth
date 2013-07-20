@@ -1,5 +1,4 @@
 var express = require('express')
-var app     = express()
 
 var _CONFIG = require('./CONFIG.js')
 var _DATABASE_CONFIG = _CONFIG.database_config
@@ -11,6 +10,7 @@ var _REPL_PORT       = _CONFIG.repl_port
 var _RUN_RABBIT      = _CONFIG.run_rabbit
 
 
+var app     = express()
 var API             = require('Api')(__dirname+'/Api') 
 var ORM             = null
 var Models          = null
@@ -19,7 +19,8 @@ var Models          = null
 
     //app.ORM    = ORM
     app.Models = Models
-    app.API    = API
+    app.API    = API 
+    app.ORM    = ORM
     //app.ACL    = ACL
     //app.ROUTER = ROUTER
 
@@ -43,9 +44,9 @@ function bootstrap(cb){
       ORM = _ORM
       Models = ORM.models 
     
-        require(__dirname+'/config/Hooks/BEFORE-APP.js')(app,function(){
+        //require(__dirname+'/config/Hooks/BEFORE-APP.js')(app,function(){
         _app(null,cb)
-        })
+        //})
     
     
     })
