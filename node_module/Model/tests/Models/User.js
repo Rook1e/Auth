@@ -38,7 +38,7 @@ Model.definition ={
         id       : { type:'text'  , required:true },
         password : { type:'text'  , required:true },
         //access   : { type:'number', required:true }, // this might need to be hacked in
-        created   : { type:'number', /*required:true*/ },
+        //created   : { type:'number', /*required:true*/ }, // beforeSave and beforeCreate hooks are busted can`t use em changes don`t persist
         modify    : { type:'number', /*required:true*/ }
     }
 
@@ -107,13 +107,9 @@ Ensures the property value is a valid IPv4 address. It does not accept masks (ex
   */
 
     hooks:{
-      beforeCreate:function(){
-        this.created = new Date().getTime()
+      beforeValidation:function(){ 
+        this.modify = new Date().getTime()
       },
-      beforeSave:function(){
-        this.modify  = new Date().getTime()
-      }
-
     },
 
 

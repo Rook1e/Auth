@@ -9,7 +9,7 @@ var ORM = require('./../index.js')(DATABASE_CONFIG,__dirname+'/Models',function(
     ORM.drop(function(){
     ORM.sync(function(){
 
-      ORM.models.user.create({},function(err,result){
+      ORM.models.user.create({id:'spoasd',password:'xxxxxx'},function(err,result){
         console.log(err)
         console.log(result)
         
