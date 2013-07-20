@@ -1,5 +1,5 @@
 module.exports = index = function(req,res){
-  req.end('it works')
+  res.end('it works')
 }
 
 index._route  = '/'
