@@ -93,7 +93,8 @@ function _app(err,cb){
         // how to extend req prototype?
         app.use(require('enhance'))
         app.use(function(req,res,next){
-          req.Models = Models
+          req.Models = Models 
+          req.models = Models
           next()
         })
 

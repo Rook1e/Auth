@@ -2,6 +2,9 @@
 echo run rabbit run 
 
 curl localhost:8787
+curl localhost:8787/xxxx/create/yyyyyyyy
+curl localhost:8787/login
+
 
 ### TESTS
 # $mount/:user/create/:password  -> 'request' | 'ok'
