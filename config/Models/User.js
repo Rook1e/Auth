@@ -1,3 +1,4 @@
+var validators = require('orm').validators
 var Model = module.exports = {}
 
 /*
@@ -89,10 +90,8 @@ patterns.ipv4(msg)
 Ensures the property value is a valid IPv4 address. It does not accept masks (example: 0 as last number is not valid).
 */
 
-// or any validation functions, NON async , unique... i don`t know what the fuck it does 
-var validators = require('orm').validators
     validations:{ 
-      id:validators.email
+      id:validators.patterns.email('not email')
       //password:
     },
 

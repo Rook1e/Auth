@@ -1,7 +1,7 @@
 // req.models || req.Models is what you want
 module.exports = index = function(req,res){
   //debugger
-  res.end('index')
+  res.end('index\n')
 }
 
 index._route  = '/'

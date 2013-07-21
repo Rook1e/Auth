@@ -122,16 +122,17 @@ function run(err,cb){
       console.log("App listening on interface "+app.get('interface') + " using port " + app.get('port'));
         if(cb) cb() 
 
-        var RABBOT ={}
-            RABBOT._CONFIG = _CONFIG
-            RABBOT.app     = app 
-            RABBOT.models  = Models
-            RABBOT.ORM     = ORM
-              if(API)     RABBOT.API = API
-              if(ROUTED)  RABBOT.ROUTED = ROUTED
-              if(ACL)   { RABBOT.ACL = ACL }
+        var context  = {}
+            context.RABBOT = {}
+            context.RABBOT._CONFIG = _CONFIG
+            context.RABBOT.app     = app 
+            context.RABBOT.models  = Models
+            context.RABBOT.ORM     = ORM
+              if(API)     context.RABBOT.API = API
+              if(ROUTED)  context.RABBOT.ROUTED = ROUTED
+              if(ACL)     context.RABBOT.ACL = ACL 
 
-        if(_REPL_PORT)  require('repel')(_REPL_PORT,RABBOT)
+        if(_REPL_PORT)  require('repel')(_REPL_PORT,context)
         if(_RUN_RABBIT) require('rabbit')(__dirname)
     });
 }

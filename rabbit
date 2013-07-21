@@ -1,9 +1,8 @@
 #!/bin/bash 
-echo run rabbit run 
 
-curl localhost:8787
-curl localhost:8787/xxxx/create/yyyyyyyy
-curl localhost:8787/login
+
+curl localhost:8787 | is "index" && echo INDEX WORKING | color mage
+curl localhost:8787/xxxx/create/yyyyyyyy | _ select .err | _ isArray | color red
 
 
 ### TESTS
