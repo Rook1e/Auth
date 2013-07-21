@@ -89,18 +89,22 @@ function _app(err,cb){
         // what is this i don`t understand it what it does or if i need it?
         //app.use(express.methodOverride());
         //app.use(express.compress())
-        
-        // how to extend req prototype?
-        app.use(require('enhance'))
+         
+        // how to extend req prototype?      
+        app.use(require('enhance')) 
+
+        app.use(require('log'))
+
+        // how to extend req prototype?      
         app.use(function(req,res,next){
           req.Models = Models 
           req.models = Models
           next()
         })
 
+
         app.use(app.router);
         app.use(express.favicon());
-        app.use(express.logger('dev'));
       });
      
   
