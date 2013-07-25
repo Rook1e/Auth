@@ -1,77 +1,72 @@
 // PREFERENCES
-var _CONFIG = require('./CONFIG.js') 
-var _RUN_RABBIT       = _CONFIG.run_rabbit
+var _ = require('./Config/config.js') 
+    console.log(_)
+var _RUN_RABBIT        = _.run_rabbit
 
-var _PORT             = _CONFIG.port
-var _INTERFACE        = _CONFIG.interface
-var _REPL_PORT        = _CONFIG.repl_port
+var _PORT              = _.port
+var _INTERFACE         = _.interface
+var _REPL_PORT         = _.repl_port
 
-var _DATABASE_CONFIG  = _CONFIG.database_config
-
-var _PATH_TO_MODLES   = _CONFIG.path_to_models
-var _PATH_TO_ACL      = _CONFIG.path_to_acl
-var _PATH_TO_POLICIES = _CONFIG.path_to_policies
-var _PATH_TO_API      = _CONFIG.path_to_api
-var _PATH_TO_ROUTES   = _CONFIG.path_to_routes
+var _DATABASE_CONFIG   = _.database_config
 
 
+var _MODELS_OFF        = _.models_off
+var _ROUTED_OFF        = _.routed_off 
+var    _ACL_OFF        =    _.acl_off
+var    _API_OFF        =    _.api_off
+
+var _PATH_TO_MODLES    = _.path_to_models
+var _PATH_TO_ACL       = _.path_to_acl
+var _PATH_TO_POLICIES  = _.path_to_policies
+var _PATH_TO_ROUTES    = _.path_to_routes
+var _PATH_TO_API       = __dirname+'/Api'
+
+var _SERVE_STATIC      = _.serve_static
+var _SERVE_DIRECTORY   = _.serve_directory
+
+var _PATH_TO_DIRECTORY = _.path_to_directory
+var _PATH_TO_STATIC    = _.path_to_static
 
 // LOADED DURING BOOTSTRAP PROCESS EVERY APP HAS THIS
 var ORM       = null 
 var Models    = null 
 
-var ACL,API,ROUTED
-
-// UNCOMMENT COMMENT TO TURN ON OFF
-
-//ACL       = require('Acl')(_PATH_TO_ACL,_PATH_TO_POLICIES)
-API       = require('Api')(_PATH_TO_API) 
-//ROUTED    = require('routed')(_PATH_TO_ROUTES)
-
-  ACL    = ( typeof ACL    == 'undefined' )? null : ACL
-  API    = ( typeof API    == 'undefined' )? null : API 
-  ROUTED = ( typeof ROUTED == 'undefined' )? null : ROUTED
-
+var ACL    = (_ACL_OFF)   ? null : require('Acl')   (_PATH_TO_ACL,_PATH_TO_POLICIES)
+var API    = (_API_OFF)   ? null : require('Api')   (_PATH_TO_API) 
+var ROUTED = (_ROUTED_OFF)? null : require('routed')(_PATH_TO_ROUTES)
 
 var express = require('express')
 var app     = express()
  
-
   // exports for rig
   module.exports = app
   module.exports.bootstrap = bootstrap
-  module.exports._CONFIG = _CONFIG 
+  module.exports._CONFIG = _ 
 
 
-//var ACL             = require('ACL')()
-
-    //app.ORM    = ORM
-    //app.Models = Models
-    //app.API    = API 
-    //app.ORM    = ORM
-    //app.ACL    = ACL
-    //app.ROUTER = ROUTER
 
   if(!module.parent){  bootstrap(run)  }
 
 
-// should be fancy async auto // looked into fancy auto synch have 
-// to wrap all the modules strange to make it work
-// opting for callback hell
 function bootstrap(cb){ 
+
+  if(!_MODELS_OFF){
     require('Model')(_DATABASE_CONFIG,_PATH_TO_MODLES,function(err,_ORM){ 
       if(err) throw new Error('ORM exploded')
       ORM = _ORM
       Models = ORM.models 
     
-        //require(__dirname+'/config/Hooks/BEFORE-APP.js')(app,function(){
+        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(app,function(){
         _app(null,cb)
-        //})
+        })
     })
+  }else{
+        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(app,function(){
+        _app(null,cb)
+        })
+  }
 }
 
-
-var html = require('fs').readFileSync(__dirname+'/public/index.html')
 
 function _app(err,cb){
   if(err) throw new Error(err)
@@ -80,29 +75,33 @@ function _app(err,cb){
       app.configure(function(){
         app.set('interface', _INTERFACE);
         app.set('port'     , _PORT     );
-        
-        if(ROUTED) app.use(ROUTED) 
-        if(ACL)    app.use(ACL)
+ 
+        app.use(require('enhance')) 
+        app.use(require('log'))
+
+        if(!_ROUTED_OFF) app.use(ROUTED) 
+        if(!_ACL_OFF)    app.use(ACL)
 
         //app.use(express.bodyParser()); 
         
         // what is this i don`t understand it what it does or if i need it?
         //app.use(express.methodOverride());
-        //app.use(express.compress())
          
         // how to extend req prototype?      
-        app.use(require('enhance')) 
 
-        app.use(require('log'))
+        // how to extend req prototype?
+        //
 
-        // how to extend req prototype?      
-        app.use(function(req,res,next){
-          req.Models = Models 
-          req.models = Models
-          next()
-        })
+        if(!_MODELS_OFF){
+          app.use(function(req,res,next){
+            req.Models = Models 
+            req.models = Models
+            next()
+          })
+        }
 
 
+        //app.use(express.compress())
         app.use(app.router);
         app.use(express.favicon());
       });
@@ -112,6 +111,11 @@ function _app(err,cb){
         API.attachGet(app)
         //API.attachPost(app)
       }
+
+
+     
+      if(_SERVE_STATIC)   { app.use( express.static(_PATH_TO_STATIC))       }
+      if(_SERVE_DIRECTORY){ app.use( express.directory(_PATH_TO_DIRECTORY)) }
 
       if(module.parent && _RUN_RABBIT) require('rabbit')(__dirname)
 
@@ -128,7 +132,7 @@ function run(err,cb){
 
         var context  = {}
             context.RABBOT = {}
-            context.RABBOT._CONFIG = _CONFIG
+            context.RABBOT._ = _
             context.RABBOT.app     = app 
             context.RABBOT.models  = Models
             context.RABBOT.ORM     = ORM

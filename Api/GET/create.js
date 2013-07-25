@@ -8,9 +8,9 @@ module.exports = create = function(req,res){
     password: req.params.password
   },function(err){
     if(err)
-      res.json({err:err,result:null})
+      res.json({err:err , result:null})
     else
-      res.json({err:null,result:'ok'})
+      res.json({err:null, result:'ok'})
   })
 }
 

@@ -2,16 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Auth</title>
+  <title> Auth </title> 
+  <style type="text/css"> 
+
+    body,html{
+      height:100%;
+      margin:0px; 
+      padding:0px;
+    }
+
+    #wrapper{
+      height:100%;
+      width:100%;
+      display:table;
+    }
+
+    #center{
+      border:1px solid; 
+      border-color:white;
+      display:table-cell;
+      vertical-align:middle;
+      text-align:center;
+      background-image:url('./logo.gif');
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+    }
+
+
+  </style> 
+  <script type="text/javascript" src='/jquery.js' ></script>
+  <script type="text/javascript">  
+    $(function(){
+      $('#center').on('click',function(e){  
+        e.stopPropagation()
+        location.href = '/docs'
+      })
+    })
+
+
+  </script>
 </head>
-
-<script type="text/javascript">
-  console.log('!')
-
-</script>
-
 <body>
-  <h1>Auth</h1>
-
+  <div id="wrapper">
+    <div id="center" >
+    </div>
+  </div>
 </body>
 </html>

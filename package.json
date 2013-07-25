@@ -1,7 +1,7 @@
 {
   "name": "tagRabbit",
   "version": "0.0.0",
-  "description": "The MIT License (MIT)",
+  "description": "Documentation of useful stuff",
   "main": "app.js",
   "dependencies": {
     "orm": "~2.0.15",
@@ -10,9 +10,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: tests run at end of mount boot in rabbit file\" && exit 1"
   },
   "repository": "",
   "author": "",
-  "license": "BSD"
+  "license": "M.I.T"
 }
