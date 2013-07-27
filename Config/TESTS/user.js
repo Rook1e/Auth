@@ -1,4 +1,4 @@
-var _ = require(__dirname+'/../../config.js')
+var _ = require(__dirname+'/../config.js')
 
 var async = require('async')
 
@@ -13,7 +13,7 @@ require('Model')(_DATABASE_CONFIG,_PATH_TO_MODLES,function(err,_ORM){
 
   ORM.drop(function(){
     ORM.sync(function(){
-      require('repel')(5001,{User:ORM.models.user})
+      //require('repel')(5001,{User:ORM.models.user})
       Ready(ORM.models.user)
     })
   })
@@ -76,6 +76,7 @@ function Ready(User){
   ],function(err,results){
   if(err) throw new Error(err)
   console.log(results)
+  process.exit()
   })
 
 

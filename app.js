@@ -135,7 +135,7 @@ function run(err,cb){
 
 
         if(_REPL_PORT)  require('repel')(_REPL_PORT,context)
-        if(_RUN_RABBIT) require('rabbit')(__dirname)
+        if(_RUN_RABBIT) require('rabbit')(__dirname,null,true)
     });
 }
 
