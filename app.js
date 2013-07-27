@@ -37,13 +37,17 @@ var ROUTED = (_ROUTED_OFF)? null : require('routed')(_PATH_TO_ROUTES)
 
 var express = require('express')
 var app     = express()
- 
-  // exports for rig
+
+var RABBOT = {}
+RABBOT._ = _
+RABBOT.app     = app 
+  if(API)     RABBOT.API = API
+  if(ROUTED)  RABBOT.ROUTED = ROUTED
+  if(ACL)     RABBOT.ACL = ACL 
+
   module.exports = app
   module.exports.bootstrap = bootstrap
   module.exports._CONFIG = _ 
-
-
 
   if(!module.parent){  bootstrap(run)  }
 
@@ -56,12 +60,15 @@ function bootstrap(cb){
       ORM = _ORM
       Models = ORM.models 
     
-        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(app,function(){
+      RABBOT.models  = Models
+      RABBOT.ORM     = ORM
+
+        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(RABBOT,function(){
         _app(null,cb)
         })
     })
   }else{
-        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(app,function(){
+        require(__dirname+'/Config/Hooks/BEFORE-APP.js')(RABBOT,function(){
         _app(null,cb)
         })
   }
@@ -82,15 +89,13 @@ function _app(err,cb){
         if(!_ROUTED_OFF) app.use(ROUTED) 
         if(!_ACL_OFF)    app.use(ACL)
 
-        //app.use(express.bodyParser()); 
+        app.use(express.bodyParser()); 
         
         // what is this i don`t understand it what it does or if i need it?
         //app.use(express.methodOverride());
          
         // how to extend req prototype?      
-
         // how to extend req prototype?
-        //
 
         if(!_MODELS_OFF){
           app.use(function(req,res,next){
@@ -100,25 +105,20 @@ function _app(err,cb){
           })
         }
 
-
         //app.use(express.compress())
         app.use(app.router);
         app.use(express.favicon());
       });
-     
   
       if(API){
         API.attachGet(app)
-        //API.attachPost(app)
+        API.attachPost(app)
       }
-
-
      
       if(_SERVE_STATIC)   { app.use( express.static(_PATH_TO_STATIC))       }
       if(_SERVE_DIRECTORY){ app.use( express.directory(_PATH_TO_DIRECTORY)) }
 
       if(module.parent && _RUN_RABBIT) require('rabbit')(__dirname)
-
 
    if(cb) cb()
 }
@@ -131,14 +131,8 @@ function run(err,cb){
         if(cb) cb() 
 
         var context  = {}
-            context.RABBOT = {}
-            context.RABBOT._ = _
-            context.RABBOT.app     = app 
-            context.RABBOT.models  = Models
-            context.RABBOT.ORM     = ORM
-              if(API)     context.RABBOT.API = API
-              if(ROUTED)  context.RABBOT.ROUTED = ROUTED
-              if(ACL)     context.RABBOT.ACL = ACL 
+            context.RABBOT = RABBOT
+
 
         if(_REPL_PORT)  require('repel')(_REPL_PORT,context)
         if(_RUN_RABBIT) require('rabbit')(__dirname)

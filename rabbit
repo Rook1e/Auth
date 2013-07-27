@@ -1,16 +1,3 @@
-#!/bin/bash 
+#!/usr/local/bin/node
 
 
-curl localhost:8787 2> /dev/null | is "index" && echo INDEX WORKING | color green
-
-curl localhost:8787/xxxx/create/yyyyyyyy  #| _ select .err | _ isArray | color red
-
-
-### TESTS
-# $mount/:user/create/:password  -> 'request' | 'ok'
-# $mount/:user/login/:password   -> 'auth'    | 'ok'
-# $mount/:user/islogged          ->  true       false
-# $mount/:user/logout/:password  -> 'auth'    | 'ok'
-# $mount/:user/reset             -> 'auth'    | 'ok'
-# $mount/:user/update/:token     -> 'auth'    | 'ok'
-# $mount/:user/login/:password   -> 'auth'    | 'ok'

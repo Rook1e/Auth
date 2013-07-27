@@ -1,144 +1,187 @@
 var validators = require('orm').validators
 var Model = module.exports = {}
 
-/*
-Properties
+// get better version then this
+var generateHash = function(cb){
+require('crypto').randomBytes(16,function(err,bytes){
+  cb(err,bytes.toString('hex'))
+})
 
-Types
+}
 
-Native  String  Native  String
-String  'text'  Date  'date '
-Number  'number'  Object  'object'
-Boolean 'boolean' Buffer  'binary'
---- 'enum'
-Options
+Model.instance_methods = {
+login:function(params,cb){
+  var email    = params.email
+  var password = params.password 
+  this.find({email:email,password:password},function(err,result){
+    if(err) throw new Error(err)
+    if(result.length) 
+        cb(null,true)
+      else 
+        cb(null,false)
+  })
+},
 
-[all types]
+verify:function(params,cb){
+  var email = params.email 
+  var pin   = params.pin
+  this.find({email:email,pin:pin},function(err,user){
+    if(err) throw new Error(err)
+    if(user.length){ 
+     user = user[0]
+      user.save({verified:true},function(err,result){
+        if(err) throw new Error(err)
+          cb(null,'ok')
+      })
+    }else{
+      cb('Bad pin or email',null)
+    }
+  })
+},
+change_password:function(params,cb){
+  var email        = params.email
+  var new_password = params.new_password
+  var pin          = params.pin
+  var password     = params.password
+  if(pin && password) throw new Error('Change takes password or pin not both.')
 
-required: true marks the column as NOT NULL, false (default)
-defaultValue: sets the default value for the field
-string
+  if(params.pin){
+      this.find({email:email,pin:pin},function(err,user){
+      if(err) throw new Error(err)
+        if(!user.length){
+          cb('Not found',null)
+         return
+        }else{
+          user = user[0]
+          user.password = password
+          user.save(function(err,result){
+            if(err) throw new Error(err)
+            cb(null,'ok')
+            return
+          })
+        }
+      })
+  }else if(params.password){
+     this.find({email:email,password:password},function(err,user){
+      if(err) throw new Error(err)
+        if(!user.length){
+          cb('Not found',null)
+         return
+        }else{
+          user = user[0]
+          user.password = password
+          user.save(function(err,result){
+            if(err) throw new Error(err)
+            cb(null,'ok')
+            return
+          })
+        }
+      }) 
+  }else{
+    cb('Params',null) 
+    return
+  }
+},
+generate_pin:function(params,cb){
+  var email = params.email 
 
-size: max length of the string
-number
+  this.find({email:email},function(err,user){
+    if(err) throw new Error(err) 
+    if(user.length){
+      user = user[0]
+      generateHash(function(err,pin){
+        if(err) throw new Error(err)
+          user.pin = pin
+             user.save((function(pin){ return function(err){
+               cb(err,pin)
+             }})(user.pin))
+      })
+    }else{
+      cb('Not found',null)
+    }
+  })
+}
 
-rational: true (default) creates a FLOAT/REAL, false an INTEGER
-size: byte size of number, default is 4. Note that 8 byte numbers have limitations
-unsigned: true to make INTEGER unsigned, default is false
-date
 
-time: true (default) creates a DATETIME/TIMESTAMP, false a DATE
-Note that these may vary accross drivers.
-*/
-
-
+}
 
 
 Model.definition ={
-        id       : { type:'text'  , required:true },
-        password : { type:'text'  , required:true },
-        //access   : { type:'number', required:true }, // this might need to be hacked in
-        //created   : { type:'number', /*required:true*/ }, // beforeSave and beforeCreate hooks are busted can`t use em changes don`t persist
-        modify    : { type:'number', /*required:true*/ },
-        pin       : { type:'text'}
+        id       : { type:'text'                   , unique:true },
+        pin      : { type:'text'                                 },
+        password : { type:'text'   , required:true               },
+        email    : { type:'text'   , required:true , unique:true },
+        verified : { type:'boolean', defaultValue:false          },
+        access   : { type:'number'                               },
+        created  : { type:'number'                               }, 
+        modify   : { type:'number'                               }
     }
 
 Model.advanced  = {
-/*
-Predefined Validations
-Predefined validations accept an optional last parameter msg that is the Error.msg if it's triggered.
-
-required(msg)
-Ensures property is not null or undefined. It does not trigger any error if property is 0 or empty string.
-
-rangeNumber(min, max, msg)
-Ensures a property is a number between min and max. Any of the parameters can be passed as undefined to exclude a minimum or maximum value.
-
-rangeLength(min, max, msg)
-Same as previous validator but for property length (strings).
-
-insideList(list, msg)
-Ensures a property value is inside a list of values.
-
-outsideList(list, msg)
-Ensures a property value is not inside a list of values.
-
-equalToProperty(property, msg)
-Ensures a property value is not the same as another property value in the instance. This validator is good for example for password and password repetition check.
-
-notEmptyString(msg)
-This is an alias for rangeLength(1, undefined, 'empty-string').
-
-unique(msg)
-Ensures there's not another instance in your database already with that property value. This validator is good for example for unique identifiers.
-
-password([ checks, ]msg)
-Ensures the property value has some defined types of characters, usually wanted in a password. checks is optional and defaults to "luns6" which leans lowercase letters, uppercase letters, numbers, special characters, with a minimum length of 6.
-
-patterns.match(pattern, modifiers, msg)
-Ensures the property value passes the regular expression pattern (and regex modifiers).
-
-The next patterns.* are comodity alias to this one.
-
-patterns.hexString(msg)
-Ensures the property value is an hexadecimal string (uppercase or lowercase).
-
-patterns.email(msg)
-Ensures the property value is a valid e-mail (more or less).
-patterns.ipv4(msg)
-
-Ensures the property value is a valid IPv4 address. It does not accept masks (example: 0 as last number is not valid).
-*/
-
     validations:{ 
-      id:validators.patterns.email('not email')
+      email:validators.patterns.email('not email')
       //password:
     },
 
-  /*
-  afterLoad : (no parameters) Right after loading and preparing an instance to be used;
-  afterAutoFetch : (no parameters) Right after auto-fetching associations (if any), it will trigger regardless of having associations or not;
-  beforeSave : (no parameters) Right before trying to save;
-  afterSave : (bool success) Right after saving;
-  beforeCreate : (no parameters) Right before trying to save a new instance (prior to beforeSave);
-  afterCreate : (bool success) Right after saving a new instance;
-  beforeRemove : (no parameters) Right before trying to remove an instance;
-  afterRemove : (bool success) Right after removing an instance;
-  beforeValidation : (no parameters) Before all validations and prior to beforeCreate and beforeSave;
-  All hook function are called with this as the instance so you can access anything you want related to it.
-  */
-
     hooks:{
-      beforeValidation:function(){ 
-        this.modify = new Date().getTime()
+      beforeCreate:function(cb){ 
+        var self = this 
+            if(self.id){
+            cb(new Error('Id should not be set'))
+            return
+            } 
+
+            if(self.pin){
+            cb(new Error('Pin should not be set'))
+            return
+            }
+
+            if(self.created){
+            cb(new Error('Created should not be set'))
+            return
+            }
+
+            if(self.verified){
+            cb(new Error('Verified should not be set'))
+            return
+            }
+
+            self.created = new Date().getTime()
+          generateHash(function(err,bytes){
+            if(err) throw new Error(err)
+            self.id = bytes
+              generateHash(function(err,bytes){
+               if(err) throw new Error(err)
+              self.pin = bytes
+              cb()
+              })
+          })
       },
-    },
-
-
-    methods:{
-      generatePin:function(cb){
-        this.pin = Math.floor((1 + Math.random()) * 0x10000000000).toString(16) // this function is flawed  
-      
-         if(cb){
-          this.save((function(pin){ return function(err){
-              debugger
-              cb(err,pin)
-
-          }})(this.pin))
-         }else{
-          this.save()
-         }
-         
+      beforeSave:function(){ 
+        var self = this
+            self.modify  = new Date().getTime()
+      },
+      afterLoad:function(){
+        // manually update access time record
+      },
+      beforeRemove:function(cb){  // does not seem to be firing
+          debugger
+        var output = {}
+          for(var key in this)
+              output[key] = this[key]
+        output = JSON.stringify(output) 
+          debugger
+        require('fs').appendFile(__dirname+'/../../DATA/deleted',output+'\n',function(err){ 
+          if(err) throw new Error(err)
+          cb()
+        })
       }
     },
-    
-    /*
-    cache : (default: true) Set it to false to disable Instance cache (Singletons) or set a timeout value (in seconds);
-    autoSave : (default: false) Set it to true to save an Instance right after changing any property;
-    autoFetch : (default: false) Set it to true to fetch associations when fetching an instance from the database;
-    autoFetchLimit : (default: 1) If autoFetch is enabled this defines how many hoops (associations of associations) you want it to automatically fetch.
-    */
 
+    methods:{
+
+    }
+    
 }
 
 

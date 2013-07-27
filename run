@@ -1,0 +1,11 @@
+#!/bin/bash  
+
+######################################
+# runs every time @ start and restart#
+# panic here                         #
+######################################
+
+
+
+exec node app.js &>> log.txt
+
