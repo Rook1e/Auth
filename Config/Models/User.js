@@ -29,12 +29,17 @@ verify:function(params,cb){
     if(err) throw new Error(err)
     if(user.length){ 
      user = user[0]
-      user.save({verified:true},function(err,result){
-        if(err) throw new Error(err)
-          cb(null,'ok')
-      })
+           generateHash(function(err,hash){
+            if(err) throw new Error(err)
+            user.save({verified:true,pin:hash},function(err,result){
+              if(err) throw new Error(err)
+              cb(null,'ok')
+              return
+            })
+          })
+    
     }else{
-      cb('Bad pin or email',null)
+      cb('AUTH',null)
     }
   })
 },
@@ -46,7 +51,7 @@ change_password:function(params,cb){
   if(pin && password) throw new Error('Change takes password or pin not both.')
 
   if(params.pin){
-      this.find({email:email,pin:pin},function(err,user){
+      this.find({email:email,pin:pin,verified:true},function(err,user){
       if(err) throw new Error(err)
         if(!user.length){
           cb('Not found',null)
@@ -66,7 +71,7 @@ change_password:function(params,cb){
         }
       })
   }else if(params.password){
-     this.find({email:email,password:password},function(err,user){
+     this.find({email:email,password:password,verified:true},function(err,user){
       if(err) throw new Error(err)
         if(!user.length){
           cb('Not found',null)
@@ -86,10 +91,10 @@ change_password:function(params,cb){
     return
   }
 },
-generate_pin:function(params,cb){
+reset:function(params,cb){
   var email = params.email 
 
-  this.find({email:email},function(err,user){
+  this.find({email:email,verified:true},function(err,user){
     if(err) throw new Error(err) 
     if(user.length){
       user = user[0]
@@ -126,7 +131,6 @@ Model.advanced  = {
       email:validators.patterns.email('not email')
       //password:
     },
-
     hooks:{
       beforeCreate:function(cb){ 
         var self = this 

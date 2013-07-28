@@ -69,7 +69,7 @@ function Ready(User){
     })
   },
   function(cb){
-    User.generate_pin({email:'spo@spo.com'},function(err,result){
+    User.reset({email:'spo@spo.com'},function(err,result){
       if(err) cb(err) 
       Carry = result
       cb(null,'New pin '+result)

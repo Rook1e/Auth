@@ -4,10 +4,11 @@ require('async').series(
 [
 function(cb){
 require(__dirname+'/user.model.js')(cb)
+//cb()
 },
 function(cb){
-//require(__dirname+'/user.routes.js')(cb)
-cb()
+require(__dirname+'/user.routes.js')(cb)
+//cb()
 }
 
 ],function(err,result){
