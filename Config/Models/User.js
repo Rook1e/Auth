@@ -53,11 +53,15 @@ change_password:function(params,cb){
          return
         }else{
           user = user[0]
-          user.password = password
-          user.save(function(err,result){
+          user.password = new_password
+          generateHash(function(err,hash){
             if(err) throw new Error(err)
-            cb(null,'ok')
-            return
+            user.pin = hash
+            user.save(function(err,result){
+              if(err) throw new Error(err)
+              cb(null,'ok')
+              return
+            })
           })
         }
       })
@@ -69,7 +73,7 @@ change_password:function(params,cb){
          return
         }else{
           user = user[0]
-          user.password = password
+          user.password = new_password
           user.save(function(err,result){
             if(err) throw new Error(err)
             cb(null,'ok')

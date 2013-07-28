@@ -1,0 +1,18 @@
+#!/usr/local/bin/node
+
+require('async').series(
+[
+function(cb){
+require(__dirname+'/user.model.js')(cb)
+},
+function(cb){
+//require(__dirname+'/user.routes.js')(cb)
+cb()
+}
+
+],function(err,result){
+  console.log('\n\n ----- END ----- ')
+})
+
+
+// vim: ft=javascript:
